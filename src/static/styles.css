@@ -100,23 +100,6 @@ section h3 {
   justify-content: space-between;
 }
 
-.delete-btn {
-  background-color: #d32f2f;
-  color: white;
-  border: none;
-  padding: 4px 8px;
-  font-size: 12px;
-  border-radius: 3px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  flex-shrink: 0;
-  margin-left: 10px;
-}
-
-.delete-btn:hover {
-  background-color: #b71c1c;
-}
-
 .no-participants {
   color: #999;
   font-style: italic;
@@ -156,6 +139,19 @@ button {
 
 button:hover {
   background-color: #3949ab;
+}
+
+button.delete-btn {
+  background-color: #d32f2f;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+
+button.delete-btn:hover {
+  background-color: #b71c1c;
 }
 
 .message {
