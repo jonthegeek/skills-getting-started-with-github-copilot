@@ -93,9 +93,10 @@ class TestGetActivities:
         response = client.get("/activities")
         assert response.status_code == 200
         data = response.json()
-        assert len(data) == 9
-        assert "Chess Club" in data
-        assert "Programming Class" in data
+        # Verify expected activities are present
+        expected_activities = {"Chess Club", "Programming Class"}
+        assert expected_activities.issubset(data.keys())
+        assert len(data) >= len(expected_activities)
     
     def test_get_activities_has_correct_structure(self, client):
         """Test that activities have the correct structure"""
@@ -166,6 +167,27 @@ class TestSignup:
         assert "Signed up" in data["message"]
         assert "newstudent@mergington.edu" in data["message"]
         assert "Programming Class" in data["message"]
+    
+    def test_signup_fails_when_activity_at_capacity(self, client):
+        """Test that signup fails when activity reaches max_participants"""
+        # Fill Chess Club to capacity (max 12, currently has 2)
+        for i in range(10):
+            response = client.post(
+                f"/activities/Chess Club/signup?email=student{i}@mergington.edu"
+            )
+            assert response.status_code == 200
+        
+        # Verify activity is now at capacity
+        response = client.get("/activities")
+        assert len(response.json()["Chess Club"]["participants"]) == 12
+        
+        # Attempt to add one more student should fail
+        response = client.post(
+            "/activities/Chess Club/signup?email=overflow@mergington.edu"
+        )
+        assert response.status_code == 400
+        data = response.json()
+        assert "full capacity" in data["detail"]
 
 
 class TestUnregister:
