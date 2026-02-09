@@ -4,13 +4,18 @@ Tests for the Mergington High School Activities API
 
 import pytest
 from fastapi.testclient import TestClient
-import sys
 from pathlib import Path
+import importlib.util
 
-# Add src directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
-from app import app, activities
+# Import app module using importlib to avoid brittle sys.path modification
+APP_MODULE_PATH = Path(__file__).parent.parent / "src" / "app.py"
+spec = importlib.util.spec_from_file_location("app", APP_MODULE_PATH)
+if spec is None or spec.loader is None:
+    raise ImportError(f"Cannot load app module from {APP_MODULE_PATH}")
+app_module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(app_module)
+app = app_module.app
+activities = app_module.activities
 
 
 @pytest.fixture
